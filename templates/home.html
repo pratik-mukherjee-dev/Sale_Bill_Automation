@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        :root {
+            --bg-main: #f6f8fc;
+            --panel: #ffffff;
+            --border: #d7deea;
+            --border-hover: #5b8def;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --primary: #5b8def;
+            --radius: 14px;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-main);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar-brand {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 14px;
+            font-size: 13px;
+            color: var(--text-main);
+            cursor: pointer;
+            text-decoration: none;
+            transition: .2s;
+        }
+
+        .logout-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 36px;
+        }
+
+        .welcome h1 {
+            font-size: 26px;
+            color: var(--text-main);
+            margin: 0 0 6px;
+        }
+
+        .welcome p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .nav-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            text-decoration: none;
+            transition: all .25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .nav-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(91, 141, 239, .12);
+        }
+
+        .card-icon {
+            font-size: 36px;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .card-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            width: fit-content;
+        }
+
+        .badge-live {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .badge-soon {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 600px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">Byte-Force Console</div>
+    <div class="topbar-right">
+        <span>{{ user.username }}</span>
+        <a href="{% url 'password_change' %}" class="logout-btn">Change Password</a>
+        <form method="post" action="{% url 'logout' %}" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Log out</button>
+        </form>
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div class="welcome">
+        <h1>Welcome back, {{ user.first_name|default:user.username }}</h1>
+        <p>Choose a tool to get started</p>
+    </div>
+
+    <div class="card-grid">
+
+        <a href="{% url 'upload_file' %}" class="nav-card">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Sale Bill Generator</div>
+            <div class="card-desc">
+                Upload stock data and generate randomized Tally-compatible sale bills with GST calculations.
+            </div>
+            <span class="card-badge badge-live">Live</span>
+        </a>
+
+        <a href="{% url 'upload_file' %}" class="nav-card">
+            <div class="card-icon">🛠️</div>
+            <div class="card-title">New Tool</div>
+            <div class="card-desc">
+                Coming soon. A new processing tool will be available here.
+            </div>
+            <span class="card-badge badge-soon">Coming Soon</span>
+        </a>
+
+    </div>
+
+    <div class="footer">
+        Made with ❤️ by Byte-Force © 2026
+    </div>
+
+</div>
+
+</body>
+</html>

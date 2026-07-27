@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import FileResponse, HttpResponse
+from django.contrib.auth.decorators import login_required
 from .forms import UploadAndTuneForm
 from .logic import extract_clean_data, generate_mixed_bills, format_bills_like_tally
 from datetime import datetime
@@ -8,6 +9,7 @@ import tempfile
 import os
 
 
+@login_required
 def upload_file(request):
     if request.method == 'POST':
         form = UploadAndTuneForm(request.POST, request.FILES)
@@ -126,13 +128,16 @@ def _serve_and_cleanup(request, session_key):
     return response
 
 
+@login_required
 def download_bills(request):
     return _serve_and_cleanup(request, 'bills_path')
 
 
+@login_required
 def download_tally(request):
     return _serve_and_cleanup(request, 'tally_bills_path')
 
 
+@login_required
 def download_remain(request):
     return _serve_and_cleanup(request, 'remained_stocks_path')

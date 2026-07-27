@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-)he#5j-d7^p^2r!(7s^jb@9*fyj06tajxx!3i*+(v%@*tu87yk"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['tallyautomation.pythonanywhere.com', '*']
 
@@ -130,3 +130,9 @@ MEDIA_ROOT = '/home/tallyautomation/Sale_Bill_Automation/media'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/tallyautomation/Sale_Bill_Automation/static'
 STATIC_URL = '/static/'
+
+# Auth
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
