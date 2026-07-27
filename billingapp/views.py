@@ -9,15 +9,10 @@ import os
 
 
 def upload_file(request):
-
     if request.method == 'POST':
-
         form = UploadAndTuneForm(request.POST, request.FILES)
-
         if form.is_valid():
-
             gst_percentage = form.cleaned_data['gst_percentage']
-
             # Select correct file based on GST
             if gst_percentage == 0:
                 uploaded_file = form.cleaned_data.get('non_taxable_file')
@@ -103,41 +98,41 @@ def upload_file(request):
     return render(request, 'upload.html', {'form': form})
 
 
-def _get_path_from_session(request, key):
-    paths = request.session.get('out_paths')
-    if not paths:
-        return None
-    return paths.get(key)
+def _serve_and_cleanup(request, session_key):
+    file_path = request.session.get(session_key)
+    if not file_path or not os.path.exists(file_path):
+        return HttpResponse("File not found or session expired.", status=404)
+
+    response = FileResponse(
+        open(file_path, 'rb'),
+        as_attachment=True,
+        filename=os.path.basename(file_path)
+    )
+
+    parent_dir = os.path.dirname(file_path)
+
+    original_close = response.close
+
+    def patched_close():
+        original_close()
+        try:
+            os.unlink(file_path)
+            if os.path.isdir(parent_dir) and not os.listdir(parent_dir):
+                os.rmdir(parent_dir)
+        except OSError:
+            pass
+
+    response.close = patched_close
+    return response
 
 
 def download_bills(request):
-    bills_path = request.session['bills_path']
-    if bills_path and os.path.exists(bills_path):
-        return FileResponse(
-            open(bills_path, 'rb'),
-            as_attachment=True,
-            filename=os.path.basename(bills_path)
-        )
-    return None
+    return _serve_and_cleanup(request, 'bills_path')
 
 
 def download_tally(request):
-    tally_bills_path = request.session['tally_bills_path']
-    if tally_bills_path and os.path.exists(tally_bills_path):
-        return FileResponse(
-            open(tally_bills_path, 'rb'),
-            as_attachment=True,
-            filename=os.path.basename(tally_bills_path)
-        )
-    return None
+    return _serve_and_cleanup(request, 'tally_bills_path')
 
 
 def download_remain(request):
-    remained_stocks_path = request.session['remained_stocks_path']
-    if remained_stocks_path and os.path.exists(remained_stocks_path):
-        return FileResponse(
-            open(remained_stocks_path, 'rb'),
-            as_attachment=True,
-            filename=os.path.basename(remained_stocks_path)
-        )
-    return None
+    return _serve_and_cleanup(request, 'remained_stocks_path')

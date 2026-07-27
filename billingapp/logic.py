@@ -184,7 +184,7 @@ def generate_mixed_bills(
 
         if bill_items:
             bills.extend(bill_items)
-            recent_items.append(item["Item"] for item in bill_items)
+            recent_items.append([item["Item"] for item in bill_items])
             bill_no += 1
 
     return pd.DataFrame(bills), df
@@ -231,7 +231,7 @@ def format_bills_like_tally(bills_df, voucher_date, gstPercentage):
                 "Billed Quantity": row.Quantity,
                 "Item Rate": row._4,  # Selling Rate
                 "Item Rate per": "",
-                "Tax Rate": "2.50%",
+                "Tax Rate": f"{gstPercentage / 2:.2f}%" if gstPercentage else "",
                 "Item Amount": row.Value
             })
 
