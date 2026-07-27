@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Data Processing Console</title>
+
+    <style>
+
+        :root {
+
+            --bg-main: #f6f8fc;
+            --panel: #ffffff;
+
+            --soft-zone: #eef2f7;
+
+            --border: #d7deea;
+            --border-focus: #5b8def;
+
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+
+            --primary: #5b8def;
+            --primary-hover: #4a7de0;
+
+            --radius: 12px;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family: -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            sans-serif;
+
+            background: var(--bg-main);
+
+            display: flex;
+
+            justify-content: center;
+
+            padding: 40px 20px;
+        }
+
+        .card {
+
+            background: var(--panel);
+
+            border-radius: var(--radius);
+
+            border: 1px solid var(--border);
+
+            width: 100%;
+            max-width: 720px;
+
+            padding: 30px;
+
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .04);
+        }
+
+        .header h1 {
+
+            font-size: 22px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .header p {
+
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 18px;
+        }
+
+        .form-group {
+
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .full-width {
+
+            grid-column: span 2;
+        }
+
+        .form-group label {
+
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-group input {
+
+            background: #f9fbff;
+
+            border: 1px solid var(--border);
+
+            border-radius: 8px;
+
+            padding: 10px 12px;
+
+            font-size: 14px;
+
+            transition: .2s;
+        }
+
+        .form-group input:focus {
+
+            outline: none;
+
+            border-color: var(--border-focus);
+
+            background: #ffffff;
+
+            box-shadow: 0 0 0 3px rgba(91, 141, 239, .15);
+        }
+
+        .hint {
+
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .file-upload {
+
+            background: var(--soft-zone);
+
+            border: 2px dashed var(--border-focus);
+
+            border-radius: var(--radius);
+
+            padding: 25px;
+
+            text-align: center;
+
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+
+            background: #e7edf7;
+        }
+
+        .file-name {
+
+            font-size: 13px;
+            margin-top: 6px;
+            color: var(--text-main);
+        }
+
+        .submit-btn {
+
+            margin-top: 24px;
+
+            width: 100%;
+
+            padding: 12px;
+
+            background: var(--primary);
+
+            border: none;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            color: white;
+
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+
+            background: var(--primary-hover);
+        }
+
+        .footer {
+
+            margin-top: 18px;
+
+            text-align: center;
+
+            font-size: 12px;
+
+            color: var(--text-secondary);
+        }
+
+        .form-scroll {
+
+            max-height: 60vh;
+
+            overflow-y: auto;
+
+            padding-right: 6px;
+        }
+
+        .file-upload {
+
+            border: 2px dashed var(--border-focus);
+
+            border-radius: 12px;
+
+            padding: 30px;
+
+            background: var(--soft-zone);
+
+            cursor: pointer;
+
+            transition: 0.25s;
+
+        }
+
+        .file-upload:hover {
+
+            background: #e7edf7;
+
+        }
+
+        .file-upload.dragover {
+
+            background: #dde6f5;
+
+            border-color: var(--primary);
+
+        }
+
+
+        .upload-content {
+
+            text-align: center;
+
+        }
+
+        .upload-icon {
+
+            font-size: 40px;
+
+            margin-bottom: 10px;
+
+        }
+
+        .upload-text {
+
+            font-weight: 600;
+
+            color: var(--text-main);
+
+        }
+
+        .upload-subtext {
+
+            font-size: 12px;
+
+            color: var(--text-secondary);
+
+        }
+
+
+        .file-selected {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            background: #e9eef8;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+        }
+
+
+        .file-remove {
+
+            cursor: pointer;
+
+            color: red;
+
+            font-weight: bold;
+
+        }
+
+        .file-remove {
+
+            background: none;
+            border: none;
+
+            color: #ef4444;
+
+            font-size: 16px;
+
+            cursor: pointer;
+
+            padding: 4px 8px;
+
+        }
+
+        .file-remove:hover {
+
+            background: rgba(239, 68, 68, .1);
+
+            border-radius: 6px;
+
+        }
+
+        /* disabled upload zone */
+
+        .file-upload.disabled {
+
+            opacity: 0.5;
+
+            cursor: not-allowed;
+
+        }
+
+        .file-upload.disabled * {
+
+            cursor: not-allowed !important;
+
+        }
+
+        .file-upload.disabled:hover::after {
+
+            opacity: 1;
+
+        }
+
+        #upload-tooltip {
+
+            position: fixed;
+
+            background: #111827;
+
+            color: white;
+
+            padding: 6px 10px;
+
+            border-radius: 6px;
+
+            font-size: 12px;
+
+            pointer-events: none;
+
+            opacity: 0;
+
+            transform: translate(-50%, -140%);
+
+            transition: opacity 0.15s ease;
+
+            z-index: 9999;
+
+            white-space: nowrap;
+
+        }
+
+        #id_taxable_file,
+        #id_non_taxable_file {
+
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="card">
+
+    <div class="header">
+
+        <h1>Data Processing Console</h1>
+
+        <p>Upload dataset and configure processing parameters</p>
+
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="form-scroll">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    {{ form.sale_profit_percentage.label_tag }}
+                    {{ form.sale_profit_percentage }}
+
+                    <span class="hint">Profit margin on sales</span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    {{ form.gst_percentage.label_tag }}
+                    {{ form.gst_percentage }}
+
+                    <span class="hint">0 = Non-Taxable | >0 = Taxable</span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    {{ form.target_bills.label_tag }}
+                    {{ form.target_bills }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    {{ form.base_repeat_chance.label_tag }}
+                    {{ form.base_repeat_chance }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    {{ form.normalize_coefficient.label_tag }}
+                    {{ form.normalize_coefficient }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    {{ form.repeat_window.label_tag }}
+                    {{ form.repeat_window }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    {{ form.min_units.label_tag }}
+                    {{ form.min_units }}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    {{ form.max_units.label_tag }}
+                    {{ form.max_units }}
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    {{ form.voucher_date.label_tag }}
+                    {{ form.voucher_date }}
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>Taxable Stock File</label>
+
+                    <label for="id_taxable_file"
+                           class="file-upload"
+                           id="taxable-drop-zone">
+
+                        {{ form.taxable_file }}
+
+                        <div class="upload-content" id="taxable-placeholder">
+
+                            <div class="upload-icon">
+                                ☁️
+                            </div>
+
+                            <div class="upload-text">
+                                Drop taxable file here or click to upload
+                            </div>
+
+                            <div class="upload-subtext">
+                                Supports .xlsx, .xls
+                            </div>
+
+                        </div>
+
+
+                        <div class="file-selected"
+                             id="taxable-selected"
+                             style="display:none;">
+
+                            <span class="file-icon">📄</span>
+
+                            <span class="file-name"
+                                  id="taxable-name"></span>
+
+                            <button type="button"
+                                    class="file-remove"
+                                    id="taxable-remove">
+                                ✕
+                            </button>
+
+                        </div>
+
+                    </label>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>Non-Taxable Stock File</label>
+
+                    <label for="id_non_taxable_file"
+                           class="file-upload"
+                           id="nontaxable-drop-zone">
+
+                        {{ form.non_taxable_file }}
+
+                        <div class="upload-content"
+                             id="nontaxable-placeholder">
+
+                            <div class="upload-icon">
+                                ☁️
+                            </div>
+
+                            <div class="upload-text">
+                                Drop non-taxable file here or click to upload
+                            </div>
+
+                            <div class="upload-subtext">
+                                Supports .xlsx, .xls
+                            </div>
+
+                        </div>
+
+
+                        <div class="file-selected"
+                             id="nontaxable-selected"
+                             style="display:none;">
+
+                            <span class="file-icon">📄</span>
+
+                            <span class="file-name"
+                                  id="nontaxable-name"></span>
+
+                            <button type="button"
+                                    class="file-remove"
+                                    id="nontaxable-remove">
+                                ✕
+                            </button>
+
+                        </div>
+
+                    </label>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <button type="submit" class="submit-btn">
+
+            Process File
+
+        </button>
+
+    </form>
+
+
+    <div class="footer">
+
+        Made with ❤️ by Byte-Force © 2026
+
+    </div>
+
+</div>
+
+<div id="upload-tooltip"></div>
+
+<script>
+
+    const gstInput =
+        document.getElementById("id_gst_percentage");
+
+    const taxableZone =
+        document.getElementById("taxable-drop-zone");
+
+    const nontaxableZone =
+        document.getElementById("nontaxable-drop-zone");
+
+    const taxableInput =
+        document.getElementById("id_taxable_file");
+
+    const nontaxableInput =
+        document.getElementById("id_non_taxable_file");
+
+    const taxablePlaceholder =
+        document.getElementById("taxable-placeholder");
+
+    const nontaxablePlaceholder =
+        document.getElementById("nontaxable-placeholder");
+
+    const taxableSelected =
+        document.getElementById("taxable-selected");
+
+    const nontaxableSelected =
+        document.getElementById("nontaxable-selected");
+
+    const tooltip =
+        document.getElementById("upload-tooltip");
+
+
+    function attachTooltip(zone) {
+
+        zone.addEventListener("mousemove", function (e) {
+
+            if (!zone.classList.contains("disabled")) {
+                tooltip.style.opacity = 0;
+                return;
+            }
+
+            const message =
+                zone.getAttribute("data-tooltip");
+
+            tooltip.innerText = message;
+
+            tooltip.style.left =
+                e.clientX + "px";
+
+            tooltip.style.top =
+                e.clientY + "px";
+
+            tooltip.style.opacity = 1;
+
+        });
+
+
+        zone.addEventListener("mouseleave", function () {
+
+            tooltip.style.opacity = 0;
+
+        });
+
+    }
+
+
+    // attach to both zones
+
+    attachTooltip(taxableZone);
+
+    attachTooltip(nontaxableZone);
+
+    function clearFile(input, placeholder, selected) {
+        input.value = "";
+
+        placeholder.style.display = "block";
+
+        selected.style.display = "none";
+    }
+
+
+    function enableZone(zone) {
+        zone.classList.remove("disabled");
+
+        zone.removeAttribute("data-tooltip");
+    }
+
+
+    function disableZone(zone, message) {
+        zone.classList.add("disabled");
+
+        zone.setAttribute("data-tooltip", message);
+    }
+
+
+    function updateUploadMode() {
+        const gst = parseFloat(gstInput.value) || 0;
+
+        if (gst === 0) {
+            enableZone(nontaxableZone);
+
+            disableZone(
+                taxableZone,
+                "Disabled because GST is 0 (Non-taxable mode)"
+            );
+
+            clearFile(
+                taxableInput,
+                taxablePlaceholder,
+                taxableSelected
+            );
+        } else {
+            enableZone(taxableZone);
+
+            disableZone(
+                nontaxableZone,
+                "Disabled because GST is greater than 0 (Taxable mode)"
+            );
+
+            clearFile(
+                nontaxableInput,
+                nontaxablePlaceholder,
+                nontaxableSelected
+            );
+        }
+    }
+
+
+    /* block click if disabled */
+    function preventDisabledLabel(zone) {
+        zone.addEventListener("click", function (e) {
+            if (zone.classList.contains("disabled")) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    }
+
+    /* block drag if disabled */
+    function preventDisabledDrop(zone, input) {
+
+        zone.addEventListener("dragover", function (e) {
+
+            if (zone.classList.contains("disabled")) {
+                e.preventDefault();
+                return;
+            }
+
+            e.preventDefault();
+
+            zone.classList.add("dragover");
+
+        });
+
+
+        zone.addEventListener("dragleave", function () {
+
+            zone.classList.remove("dragover");
+
+        });
+
+
+        zone.addEventListener("drop", function (e) {
+
+            if (zone.classList.contains("disabled")) {
+                e.preventDefault();
+                return;
+            }
+
+            e.preventDefault();
+
+            zone.classList.remove("dragover");
+
+            const file = e.dataTransfer.files[0];
+
+            if (file) {
+
+                const dt = new DataTransfer();
+
+                dt.items.add(file);
+
+                input.files = dt.files;
+
+                // Trigger UI update safely
+                input.dispatchEvent(new Event("change", {bubbles: true}));
+
+            }
+
+        });
+
+    }
+
+    // Handle file selection UI
+
+    function setupFileUI(input, placeholder, selected, nameLabel, removeBtn) {
+
+        input.addEventListener("change", function () {
+
+            if (input.files && input.files.length > 0) {
+                nameLabel.textContent = input.files[0].name;
+
+                placeholder.style.display = "none";
+
+                selected.style.display = "flex";
+            }
+
+        });
+
+
+        removeBtn.addEventListener("click", function (e) {
+
+            e.preventDefault();
+
+            e.stopPropagation();
+
+            input.value = "";
+
+            placeholder.style.display = "block";
+
+            selected.style.display = "none";
+
+        });
+
+    }
+
+
+    // initialize both upload areas
+
+    setupFileUI(
+        taxableInput,
+        taxablePlaceholder,
+        taxableSelected,
+        document.getElementById("taxable-name"),
+        document.getElementById("taxable-remove")
+    );
+
+    setupFileUI(
+        nontaxableInput,
+        nontaxablePlaceholder,
+        nontaxableSelected,
+        document.getElementById("nontaxable-name"),
+        document.getElementById("nontaxable-remove")
+    );
+
+    /* init */
+    gstInput.addEventListener("input", updateUploadMode);
+
+    preventDisabledLabel(taxableZone);
+    preventDisabledLabel(nontaxableZone);
+    preventDisabledDrop(taxableZone, taxableInput);
+    preventDisabledDrop(nontaxableZone, nontaxableInput);
+
+    /* run once on load */
+
+    updateUploadMode();
+
+</script>
+
+</body>
+</html>

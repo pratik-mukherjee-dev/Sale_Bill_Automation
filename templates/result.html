@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Complete</title>
+
+    <style>
+
+        :root {
+            --bg-main: #f6f8fc;
+            --panel: #ffffff;
+
+            --border: #d7deea;
+
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+
+            --primary: #5b8def;
+            --primary-hover: #4a7de0;
+
+            --success: #10b981;
+
+            --radius: 14px;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            sans-serif;
+
+            background: radial-gradient(circle at 20% 10%, #eaf1ff 0%, transparent 40%),
+            radial-gradient(circle at 80% 90%, #eef2ff 0%, transparent 40%),
+            var(--bg-main);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            min-height: 100vh;
+        }
+
+        .card {
+
+            background: var(--panel);
+
+            border-radius: var(--radius);
+
+            border: 1px solid var(--border);
+
+            width: 100%;
+            max-width: 520px;
+
+            padding: 40px;
+
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .06);
+
+            text-align: center;
+
+            animation: fadeIn .5s ease;
+        }
+
+        .success-badge {
+
+            width: 80px;
+            height: 80px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(135deg, #10b981, #34d399);
+
+            color: white;
+
+            font-size: 36px;
+
+            box-shadow: 0 10px 20px rgba(16, 185, 129, .25);
+
+            animation: pop .4s ease;
+        }
+
+        h2 {
+
+            margin: 0;
+
+            font-size: 22px;
+
+            color: var(--text-main);
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+
+            font-size: 14px;
+
+            color: var(--text-secondary);
+
+            margin-bottom: 30px;
+        }
+
+        /* Download Buttons */
+
+        .download-group {
+
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .download-btn {
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 14px 16px;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 500;
+
+            border: 1px solid var(--border);
+
+            background: #f9fbff;
+
+            color: var(--text-main);
+
+            transition: all .2s ease;
+        }
+
+        .download-btn:hover {
+
+            background: #eef3ff;
+
+            border-color: var(--primary);
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 6px 14px rgba(91, 141, 239, .15);
+        }
+
+        .file-type {
+
+            font-size: 12px;
+
+            background: #eef2ff;
+
+            color: var(--primary);
+
+            padding: 4px 8px;
+
+            border-radius: 6px;
+        }
+
+        .primary-btn {
+
+            margin-top: 18px;
+
+            display: inline-block;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            background: var(--primary);
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            transition: .2s;
+        }
+
+        .primary-btn:hover {
+
+            background: var(--primary-hover);
+
+            transform: translateY(-1px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <div class="success-badge">
+        ✓
+    </div>
+
+    <h2>Processing Completed</h2>
+
+    <div class="subtitle">
+        Your files have been generated successfully and are ready for download.
+    </div>
+
+    <div class="download-group">
+
+        <a class="download-btn"
+           href="{% url 'download_bills' %}">
+
+            <span>Scatterred Data</span>
+            <span class="file-type">Excel</span>
+
+        </a>
+
+        <a class="download-btn"
+           href="{% url 'download_tally' %}">
+
+            <span>Processed Data</span>
+            <span class="file-type">Excel</span>
+
+        </a>
+
+        <a class="download-btn"
+           href="{% url 'download_remain' %}">
+
+            <span>Remaining Data</span>
+            <span class="file-type">Excel</span>
+
+        </a>
+
+    </div>
+
+    <a href="{% url 'upload_file' %}"
+       class="primary-btn">
+        Generate New File
+    </a>
+
+</div>
+
+</body>
+</html>
