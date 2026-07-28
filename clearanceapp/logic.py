@@ -180,7 +180,7 @@ def format_bills_like_tally(bills_df, voucher_date, gstPercentage):
     for bill_no, group in bills_df.groupby("Bill No", sort=True):
         group_total = group["Value"].sum()
         cgst, sgst = calculate_item_wise_gst(group, gstPercentage)
-        gross, rounded_off = round_up_gross(group_total + cgst + sgst)
+        gross, rounded_off = round_up_gross(float(group_total) + float(cgst) + float(sgst))
 
         voucher_type = "Sales"
         if gstPercentage == 0:
