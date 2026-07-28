@@ -19,13 +19,13 @@ class ClearanceUploadForm(forms.Form):
 
     min_amount = forms.FloatField(
         label="Min Amount per Bill (₹)",
-        initial=500,
+        initial=40000,
         min_value=0
     )
 
     max_amount = forms.FloatField(
         label="Max Amount per Bill (₹)",
-        initial=5000,
+        initial=50000,
         min_value=0
     )
 

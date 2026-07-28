@@ -44,6 +44,7 @@ def clearance_upload(request):
                     saleProfitPercentage=sale_profit_percentage,
                     min_amount=min_amount,
                     max_amount=max_amount,
+                    gst_percentage=gst_percentage,
                 )
 
                 if bills_df.empty:

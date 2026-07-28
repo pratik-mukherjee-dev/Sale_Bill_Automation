@@ -69,12 +69,13 @@ def generate_clearance_bills(
         saleProfitPercentage: float,
         min_amount: float,
         max_amount: float,
+        gst_percentage: float = 0,
 ):
     """
     Generate bills until every stock item's quantity reaches zero,
     or no more valid bills can be formed within the amount constraints.
 
-    Each bill's total value (before GST) must fall between min_amount and max_amount.
+    min_amount and max_amount refer to the FINAL bill value (including GST).
     """
     bills = []
     bill_no = 1
@@ -87,13 +88,20 @@ def generate_clearance_bills(
         lambda r: selling_price(r, saleProfitPercentage)
     )
 
-    max_stall_rounds = 50  # safety: consecutive failures before giving up
+    # GST multiplier to estimate final bill value from base value
+    gst_multiplier = 1 + (gst_percentage / 100)
+
+    max_stall_rounds = 50
     stall_count = 0
 
     while df["Quantity"].sum() > 0:
         bill_items = []
-        bill_total = 0.0
+        bill_total = 0.0  # base value (before GST)
         used_items_in_bill = set()
+
+        # effective max base value so that base * gst_multiplier <= max_amount
+        effective_max_base = max_amount / gst_multiplier
+        effective_min_base = min_amount / gst_multiplier
 
         available = df[df["Quantity"] > 0].index.tolist()
         random.shuffle(available)
@@ -113,10 +121,9 @@ def generate_clearance_bills(
             if sell_rate <= 0 or stock_qty <= 0:
                 continue
 
-            # how many units can we still fit in this bill?
-            remaining_budget = max_amount - bill_total
+            remaining_budget = effective_max_base - bill_total
             if remaining_budget < sell_rate:
-                continue  # can't even fit 1 unit of this item
+                continue
 
             max_by_budget = int(remaining_budget / sell_rate)
             max_allowed = min(stock_qty, max_by_budget)
@@ -142,19 +149,17 @@ def generate_clearance_bills(
             bill_total += line_value
             used_items_in_bill.add(item_name)
 
-            # temporarily deduct
             df.at[idx, "Quantity"] -= sell_qty
 
-            if bill_total >= max_amount:
+            if bill_total >= effective_max_base:
                 break
 
-        # validate bill meets minimum
-        if bill_items and bill_total >= min_amount:
+        # validate bill meets minimum (GST-inclusive check)
+        if bill_items and bill_total >= effective_min_base:
             bills.extend(bill_items)
             bill_no += 1
             stall_count = 0
         elif bill_items:
-            # bill too small — restore stock and try again
             for item in bill_items:
                 match = df[df["Particulars"].str.strip() == item["Item"]]
                 if not match.empty:
@@ -166,7 +171,6 @@ def generate_clearance_bills(
         if stall_count >= max_stall_rounds:
             break
 
-    # remaining stocks
     remaining_df = df[["Particulars", "Quantity", "Rate"]].copy()
     remaining_df = remaining_df[remaining_df["Quantity"] > 0].reset_index(drop=True)
 
